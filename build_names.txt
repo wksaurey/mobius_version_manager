@@ -1,0 +1,4 @@
+MINING MOBIUS 24-08-15 Release 4.1 RC13 Mobius Version 7.39.54469.42812.zip
+MINING MOBIUS 24-10-12 Release 4.1 RC16 Mobius Version 7.40.54561.43851_signed.zip
+MINING MOBIUS 24-10-18 Release 4.1.1 RC1 Mobius Version 7.40.54645.43961.zip
+MINING MOBIUS 24-10-12 Release 4.2 TB2 Mobius Version 7.40.54561.43289_signed.zip
