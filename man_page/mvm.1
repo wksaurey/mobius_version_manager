@@ -1,0 +1,58 @@
+tober 2024" "Version 1.0" "Mobius Version Manager"
+
+.SH NAME
+mvm \- Mobius Version Manager for Testing Environments (MVM)
+
+.SH SYNOPSIS
+.B mvm
+[\fIcommand\fP] [\fIoptions\fP]
+
+.SH DESCRIPTION
+The Mobius Version Manager (MVM) allows users to manage, switch, and run different Mobius builds within a testing environment. It supports uploading new versions, switching between versions, and managing Mobius server/client instances.
+
+.SH COMMANDS
+.TP
+.B \-u, --upload [file location]
+Upload a new version by providing the file path to a zip file.
+
+.TP
+.B \-l, --list
+List all available Mobius versions.
+
+.TP
+.B \-s, --switch [version_name]
+Switch to a specified Mobius version.
+
+.TP
+.B \-start, --start [version_name]
+Start the specified Mobius version.
+
+.TP
+.B \-stop, --stop
+Stop the currently running Mobius version.
+
+.TP
+.B \-d, --delete [version_name]
+Delete the specified Mobius version from the system.
+
+.TP
+.B \-c, --current
+Show the currently active Mobius version.
+
+.TP
+.B \-h, --help
+Show this help message.
+
+.SH EXAMPLES
+.TP
+.B mvm \-\-upload /path/to/version.zip
+Upload a new Mobius version.
+
+.TP
+.B mvm \-\-list
+List all available versions.
+
+.TP
+.B mvm \-\-switch v1.2.3
+Switch to a specified version.
+
