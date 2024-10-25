@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import argparse
+import unpacker
 
 # Example function to handle uploading a file
 def upload_version(file_location):
     print(f"Uploading and extracting version from: {file_location}")
     # Here you would ad your unzip, rename, and configure logic
+    unpacker.unpack(file_location)
 
 # Example function to handle listing available versions
 def list_versions():
