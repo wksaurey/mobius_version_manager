@@ -26,6 +26,7 @@ def unpack(file_location):
     print(f'Extracted contents to {extract_path}')
     convert_file_structure_from_windows(extract_path)
     unpack_software(extract_path)
+    build_package(extract_path)
 
 def convert_file_structure_from_windows(dir_location):
     # converting windows garbage
@@ -126,6 +127,30 @@ def modify_configurations(software_path):
 
         tree.write(config_path, encoding='utf-8', xml_declaration=True)
 
+def build_package(dir_location):
+    # generate build storage file structure
+    print(dir_location)
+    build_name = dir_location.split('/')[-1].split()
+
+    new_dir_path = f'bin/builds/{"/".join(build_name)}'
+    if not os.path.exists(new_dir_path):
+        os.makedirs(new_dir_path)
+
+
+
+    for filename in os.listdir(dir_location):
+        if not os.path.exists(f'{new_dir_path}/{filename}'):
+            os.rename(f'{dir_location}/{filename}', f'{new_dir_path}/{filename}')
+        else:
+            print(f'Already uploaded the file {filename}')
+
+    # # zip up build
+    # with ZipFile(new_dir_path, 'w' zipfile.ZIP_DEFLATED) as zipfile:
+    #     for root, _, files in os.walk(new_dir_path):
+    #         for file in files:
+    #             file_path = os.path.join(root, file)
+    #             zipf.write(file_path, os.path.relpath(file_path, new_dir_path))
+    
 
 if __name__ == "__main__":
-    modify_configurations()
+    build_package('bin/temp_build/Mining 4.1 rc13 42812')
