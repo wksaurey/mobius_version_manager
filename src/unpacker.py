@@ -1,5 +1,6 @@
 import os
 from zipfile import ZipFile
+import xml.etree.ElementTree as ET
 
 def get_build_name(file_location):
     filename = os.path.basename(file_location)
@@ -88,6 +89,42 @@ def unpack_software(software_path):
         if filename.endswith('.zip'):
             os.remove(f'{software_path}/{filename}')
 
+    modify_configurations(software_path)
+
+def modify_configurations(software_path):
+
+    for client_dir in os.listdir(software_path):
+        config_path = f'bin/temp_build/Mining 4.1 rc13 42812/Software/{client_dir}/Mobius.dll.config'
+
+        if 'Server' in client_dir:
+            client_type = 'Server'
+            print('Skipping Server')
+            continue
+        elif 'loader' in client_dir:
+            client_type = 'Loader'
+        elif 'survey' in client_dir:
+            client_type = 'Survey'
+        elif 'cab' in client_dir:
+            client_type = 'ICC'
+        else:
+            client_type = 'Control'
+        print(f'Modifying {client_type} config values')
+
+        config_modifications = {
+            'ServerAddress': 'https://10.10.253.130:18080',
+            'AllowMultipleInstances': 'True'
+        }
+
+        tree=ET.parse(config_path)
+        root = tree.getroot()
+
+        for element in root.findall("./appSettings/add"):
+            for value in config_modifications:
+                if element.attrib.get('key') == value:
+                    element.set('value', config_modifications[value])
+
+        tree.write(config_path, encoding='utf-8', xml_declaration=True)
+
 
 if __name__ == "__main__":
-    pass
+    modify_configurations()
