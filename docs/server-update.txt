@@ -1,0 +1,2 @@
+		<add key="InterfaceAddress" value="https://+:18080/" />
+		<add key="CertificateFile" value="C:\Certificates\durability_10_10_253_130.pfx" />

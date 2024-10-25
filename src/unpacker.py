@@ -30,6 +30,8 @@ def unpack(file_location):
 def convert_file_structure_from_windows(dir_location):
     # converting windows garbage
 
+    print(f'Converting from Windows to unix filesystem')
+
     # Loop through each file in the directory
     for filename in os.listdir(dir_location):
         
@@ -44,21 +46,19 @@ def convert_file_structure_from_windows(dir_location):
             # build file structure
             new_dir_path = os.path.dirname(new_file_path)
             if not os.path.exists(new_dir_path):
-                print(f'Making dir {new_dir_path}')
+                # print(f'Making dir {new_dir_path}')
                 os.makedirs(new_dir_path)
 
             if not os.path.isdir(new_file_path):
                 # Rename the file
-                print(f'Renaming: {old_file_path} -> {new_file_path}')
+                # print(f'Renaming: {old_file_path} -> {new_file_path}')
                 os.rename(old_file_path, new_file_path)
             else:
                 # delete {old_file_path
-                print(f'Deleting {old_file_path}')
+                # print(f'Deleting {old_file_path}')
                 os.remove(old_file_path)
         else:
             print(f'No backslash found in: {filename}')
-
-    print("All files have been processed.")
 
 def unpack_software(software_path):
 
@@ -98,8 +98,7 @@ def modify_configurations(software_path):
 
         if 'Server' in client_dir:
             client_type = 'Server'
-            print('Skipping Server')
-            continue
+            config_path = f'bin/temp_build/Mining 4.1 rc13 42812/Software/{client_dir}/MobiusServer.dll.config'
         elif 'loader' in client_dir:
             client_type = 'Loader'
         elif 'survey' in client_dir:
@@ -111,6 +110,8 @@ def modify_configurations(software_path):
         print(f'Modifying {client_type} config values')
 
         config_modifications = {
+		    "InterfaceAddress": "https://+:18080/",
+		    "CertificateFile": "C:\Certificates\durability_10_10_253_130.pfx",
             'ServerAddress': 'https://10.10.253.130:18080',
             'AllowMultipleInstances': 'True'
         }
