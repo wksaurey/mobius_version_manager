@@ -24,6 +24,7 @@ def unpack(file_location):
 
     print(f'Extracted contents to {extract_path}')
     convert_file_structure_from_windows(extract_path)
+    unpack_software(extract_path)
 
 def convert_file_structure_from_windows(dir_location):
     # converting windows garbage
@@ -57,6 +58,36 @@ def convert_file_structure_from_windows(dir_location):
             print(f'No backslash found in: {filename}')
 
     print("All files have been processed.")
+
+def unpack_software(software_path):
+
+    software_path = f'{software_path}/Software'
+    for filename in os.listdir(software_path):
+        file_path = f'{software_path}/{filename}'
+        extract_path = f'{file_path}'.removesuffix('.zip')
+
+        if 'Server' in filename:
+            clientType = 'Server'
+        elif 'loader' in filename:
+            clientType = 'Loader'
+        elif 'survey' in filename:
+            clientType = 'Survey'
+        elif 'cab' in filename:
+            clientType = 'ICC'
+        else:
+            clientType = 'Control'
+        print(f'Extracting {clientType} client to {extract_path}')
+
+        os.makedirs(extract_path)
+
+        with ZipFile(file_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_path)
+
+    print("Cleaning up zip files...")
+    for filename in os.listdir(software_path):
+        if filename.endswith('.zip'):
+            os.remove(f'{software_path}/{filename}')
+
 
 if __name__ == "__main__":
     pass
