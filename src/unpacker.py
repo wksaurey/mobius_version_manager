@@ -63,6 +63,7 @@ class Build:
 # entry point
 def unpack(file_location):
 
+    # generate build info
     build = Build(file_location)
     extract_path = f'bin/temp_build/{build.name}'
     with ZipFile(file_location, 'r') as zip_ref:

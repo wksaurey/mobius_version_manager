@@ -5,15 +5,7 @@ import argparse
 import unpacker
 
 
-# Example function to handle uploading a file
-def upload_version(file_location):
-    print(f"Uploading and extracting version from: {file_location}")
-    # Here you would add your unzip, rename, and configure logic
-    unpacker.unpack(file_location)
-
-
-# Main CLI handler
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Mobius Version Manager (MVM)")
 
     # Add commands (like --upload, --list, --switch)
@@ -25,3 +17,15 @@ if __name__ == "__main__":
         upload_version(args.upload)
     else:
         parser.print_help()
+
+
+# Example function to handle uploading a file
+def upload_version(file_location):
+    print(f"Uploading and extracting version from: {file_location}")
+    # Here you would add your unzip, rename, and configure logic
+    unpacker.unpack(file_location)
+
+
+# Main CLI handler
+if __name__ == "__main__":
+    main()
