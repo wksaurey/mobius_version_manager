@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import xml.etree.ElementTree as ET
 from zipfile import ZipFile
@@ -9,25 +10,43 @@ def get_build_name(file_location):
     # Mining 4.2 rc5 45584
     # MINING MOBIUS 24-10-18 Release 4.1.1 RC1 Mobius Version 7.40.54645.43961
     # MINING MOBIUS 24-08-15 Release 4.1 RC13 Mobius Version 7.39.54469.42812
-    filename = os.path.basename(file_location)
-    name_segments = filename.split()
-    # build_name = [name_segments[i] for i in [0, 4, 5, 8]]
-    build_name = [*name_segments]
+    filename = os.path.basename(file_location.lower())
 
     # possible markets
-    markets = ['Mining']
+    markets = ['mining']
+    # find all market matches from markets in filename
+    market = verify_one_match([match for match in filename if match in markets])
 
-    version_number = re.search()
+    # matches to any number as long as it is followed
+    # by one or more number seperated by a period
+    # as long as the following characters are exactly ' rc'
+    # This is to exclude the build id on the end
+    version_number = verify_one_match(re.findall(r'[0-9]+(\.[0-9])+(?= rc)', filename))
+
+    # possible build_types
+    build_types = ['rc', 'tb']
+    # find all build type matches from build_types in filename
+    build_type = verify_one_match([match for match in filename if match in build_types])
+
+    # matches the number following 'rc'
+    build_number = verify_one_match(re.findall(r'(?<=rc)[0-9]+'))
+
+    # matches any number that is at the end of the filename
+    # doesn't check for multiple matches because there
+    # should be only one endline
+    build_id = re.search(r'[0-9]+$')
+
+    return market, version_number, build_type, build_number, build_id
 
 
-    # modify sections of the name
-    build_name[0] = build_name[0].capitalize()
-    build_name[2] = build_name[2].lower()
-    build_name[3] = build_name[3].split('.')[-2]
-
-    build_name = ' '.join(build_name)
-    # print(build_name)
-    return build_name
+# verify that only one match was found from filename parsing
+# otherwise print an error message and quit
+def verify_one_match(matches):
+    if len(matches) > 1:
+        print(f'Matches found: {matches}')
+        print('Unable to process filenames with multiple matches')
+        sys.exit(1)
+    return matches[0]
 
 
 class Build:
