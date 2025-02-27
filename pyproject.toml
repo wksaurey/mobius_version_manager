@@ -1,0 +1,18 @@
+[project]
+name = "mobius-version-manager"
+version = "0.1.0"
+description = "Mobius Version Manager for Testing Environments"
+authors = [{ name = "Kolter Saurey", email = "wksaurey@google.com>" }]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.13"
+
+# Declare where the Python package can be found
+[tool.poetry]
+packages = [
+    { include = "unpacker.py", from = "src" }
+]
+
+# Declare the entry point for the app
+[tool.poetry.scripts]
+mvm = "mvm.mvm:main"  # This makes `mvm` the command that will run the main function in `mvm.py`
