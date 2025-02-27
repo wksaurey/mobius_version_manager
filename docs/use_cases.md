@@ -28,3 +28,4 @@ Packaging
 
 Notes
 - What to do with docs?
+- man/help page?
