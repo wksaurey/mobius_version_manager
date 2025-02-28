@@ -1,6 +1,6 @@
 import os
-import sys
 import re
+import sys
 import xml.etree.ElementTree as ET
 from zipfile import ZipFile
 
@@ -10,54 +10,93 @@ def get_build_name(file_location):
     # Mining 4.2 rc5 45584
     # MINING MOBIUS 24-10-18 Release 4.1.1 RC1 Mobius Version 7.40.54645.43961
     # MINING MOBIUS 24-08-15 Release 4.1 RC13 Mobius Version 7.39.54469.42812
-    filename = os.path.basename(file_location.lower())
+    filename = os.path.basename(file_location).lower().removesuffix('.zip')
+
+    # print(filename)  # debug
 
     # possible markets
     markets = ['mining']
     # find all market matches from markets in filename
-    market = verify_one_match([match for match in filename if match in markets])
+    market_matches = []
+    for market in markets:
+        if market in filename:
+            market_matches.append(market)
+    market = verify_one_match(
+        market_matches,
+        'market'
+    )
 
     # matches to any number as long as it is followed
     # by one or more number seperated by a period
     # as long as the following characters are exactly ' rc'
     # This is to exclude the build id on the end
-    version_number = verify_one_match(re.findall(r'[0-9]+(\.[0-9])+(?= rc)', filename))
+    version_number = verify_one_match(
+        re.findall(r'[0-9]+(?:\.[0-9])+(?= rc)', filename),
+        'version_number'
+    )
 
     # possible build_types
     build_types = ['rc', 'tb']
     # find all build type matches from build_types in filename
-    build_type = verify_one_match([match for match in filename if match in build_types])
+    build_type_matches = []
+    for build_type in build_types:
+        if build_type in filename:
+            build_type_matches.append(build_type)
+    build_type = verify_one_match(
+        build_type_matches,
+        'build_type'
+    )
 
     # matches the number following 'rc'
-    build_number = verify_one_match(re.findall(r'(?<=rc)[0-9]+'))
+    build_number = verify_one_match(
+        re.findall(r'(?<=rc)[0-9]+', filename),
+        'build_number'
+    )
 
     # matches any number that is at the end of the filename
-    # doesn't check for multiple matches because there
-    # should be only one endline
-    build_id = re.search(r'[0-9]+$')
+    # checks for at least one match
+    build_id = verify_one_match(
+        re.findall(r'[0-9]+$', filename),
+        'build_id'
+    )
 
-    return market, version_number, build_type, build_number, build_id
+    build_info = {
+        'market': market,
+        'version_number': version_number,
+        'build_type': build_type,
+        'build_number': build_number,
+        'build_id': build_id
+    }
+
+    return build_info
 
 
 # verify that only one match was found from filename parsing
 # otherwise print an error message and quit
-def verify_one_match(matches):
+def verify_one_match(matches, name_segment):
+    # print(f'{name_segment} matches: {matches}') # debug
+    if len(matches) == 0:
+        print(f'No matches found for {name_segment}')
+        sys.exit(1)  # loop back to user input?
     if len(matches) > 1:
-        print(f'Matches found: {matches}')
+        print(f'Matches found for {name_segment}: {matches}')
         print('Unable to process filenames with multiple matches')
-        sys.exit(1)
+        sys.exit(1)  # loop back to user input
     return matches[0]
 
 
 class Build:
     def __init__(self, file_location):
         build_info = get_build_name(file_location)
-        self.market = build_info.market
-        self.version_number = build_info.version_number
-        self.build_type = build_info.build_type
-        self.build_number = build_info.build_number
-        self.build_id = build_info.build_id
-        self.name = build_info.name
+        self.market = build_info['market']
+        self.version_number = build_info['version_number']
+        self.build_type = build_info['build_type']
+        self.build_number = build_info['build_number']
+        self.build_id = build_info['build_id']
+        self.name = self.generate_build_name()
+
+    def generate_build_name(self):
+        return f'{self.market.capitalize()} {self.version_number} {self.build_type}{self.build_number} {self.build_id}'
 
 
 # entry point
@@ -71,7 +110,7 @@ def unpack(file_location):
 
     print(f'Extracted contents to {extract_path}')
     convert_file_structure_from_windows(extract_path)
-    unpack_software(extract_path)
+    unpack_software(extract_path, build)
 
 
 def convert_file_structure_from_windows(dir_location):
@@ -108,7 +147,7 @@ def convert_file_structure_from_windows(dir_location):
             print(f'No backslash found in: {filename}')
 
 
-def unpack_software(software_path):
+def unpack_software(software_path, build):
 
     software_path = f'{software_path}/Software'
     for filename in os.listdir(software_path):
@@ -137,17 +176,17 @@ def unpack_software(software_path):
         if filename.endswith('.zip'):
             os.remove(f'{software_path}/{filename}')
 
-    modify_configurations(software_path)
+    modify_configurations(software_path, build)
 
 
-def modify_configurations(software_path):
+def modify_configurations(software_path, build):
 
     for client_dir in os.listdir(software_path):
-        config_path = f'bin/temp_build/Mining 4.2 rc6 45774/Software/{client_dir}/Mobius.dll.config'
+        config_path = f'bin/temp_build/{build.name}/Software/{client_dir}/Mobius.dll.config'
 
         if 'Server' in client_dir:
             client_type = 'Server'
-            config_path = f'bin/temp_build/Mining 4.2 rc6 45774/Software/{client_dir}/MobiusServer.dll.config'
+            config_path = f'bin/temp_build/{build.name}/Software/{client_dir}/MobiusServer.dll.config'
         elif 'loader' in client_dir:
             client_type = 'Loader'
         elif 'survey' in client_dir:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-import unpacker
+from mvm.unpacker import unpack
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
 def upload_version(file_location):
     print(f"Uploading and extracting version from: {file_location}")
     # Here you would add your unzip, rename, and configure logic
-    unpacker.unpack(file_location)
+    unpack(file_location)
 
 
 # Main CLI handler
