@@ -17,6 +17,10 @@ Build Repo
 - Delete build
 - Rename build
 - Set build to be current build
+- store the builds in a flat repo 
+    - parse the build info from the filename
+    - or (and) store a manifest.json file with all of that information
+    - store flat to begin and add filters later on as needed
 
 Start Clients
 - Choose which clients to open 
